@@ -54,4 +54,6 @@ def loading_atm(duration):
         sys.stdout.write('Retrieving Recent Transaction Complete!\n')
     elif duration == 4:
         sys.stdout.write('Closing Program Complete!\n')
+    elif duration == 6:
+        sys.stdout.write('Closing Object Complete!\n')
     sys.stdout.flush()  # Flush stdout to show the final message

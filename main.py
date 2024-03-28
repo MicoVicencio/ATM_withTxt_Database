@@ -1,7 +1,7 @@
 
 # Import necessary modules
 from person import Person  # Importing the Person class from the person module
-from load import loading  # Importing the loading function from the load module
+from load import loading,loading_atm  # Importing the loading function from the load module
 from atm import ATM
 
 atm = ATM()
@@ -51,7 +51,10 @@ def choose_person():
             loading(6)
             person5.welcome_Intro()
         elif choice == "0":
+            print("Exiting.......")
+            loading_atm(4)
             break
+            
         else:
             print("Invalid Choice! Try again!")
             
