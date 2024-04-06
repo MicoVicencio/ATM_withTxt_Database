@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Label,Button,messagebox,Entry
+from tkinter import Label,Button,messagebox,Entry,Listbox
 import datetime
 
 class GUI:
@@ -14,8 +14,7 @@ class GUI:
                  transactions = None
                  ):
         self.transactions = transactions
-        if transactions is None:
-           transactions = {}  # If transactions are not provided, initialize as an empty dictionary
+        self.transactions = {}
         self.status = status
         self.userName = username
         self.password = password
@@ -130,7 +129,7 @@ class GUI:
         deposit_button = Button(atm_functions,text = "Deposit Money",foreground="#EEEEEE",bg="#222831",command=self.deposit)
         withdraw_button = Button(atm_functions,text="Withdraw Money",foreground="#EEEEEE",bg="#222831",command=self.withdraw)
         balance_button = Button(atm_functions,text="Check Balance",foreground="#EEEEEE",bg="#222831",command=self.check_balance)
-        transactions_button = Button(atm_functions,text="View Transactons",foreground="#EEEEEE",bg="#222831")
+        transactions_button = Button(atm_functions,text="View Transactons",foreground="#EEEEEE",bg="#222831",command=self.view_transaction_history)
         
         title.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
         deposit_button.grid(row=1,column=0,padx=20,pady=10)
@@ -165,10 +164,13 @@ class GUI:
                   depo.destroy()
                   self.atm_ui()
                   
+            self.balance += value
+            self.add_transaction("Deposit",value)  
+            self.save_user_data()    
             update = f"You successfully deposit {value} pesos!"
             messagebox.showinfo("Notice",update)      
             depo.destroy()      
-            self.balance += value
+            
             self.atm_ui()
         else:
             msg = f"Depositing {value} pesos is cancelled!"
@@ -218,6 +220,7 @@ class GUI:
               
             else:  
               self.balance -= value
+              self.add_transaction("Withdraw",value)
               update = f"You successfully withdraw {value} pesos!"
               messagebox.showinfo("Notice",update)
               self.save_user_data()
@@ -238,8 +241,6 @@ class GUI:
     def update_current_user(self,value):
         self.current_user = value
         self.msg_box('1')
-        
-           
         
     def msg_box(self,value):
         if value == '1':
@@ -313,17 +314,17 @@ class GUI:
         transaction_time = now.strftime("%Y-%m-%d %H:%M:%S")  # Format the current date and time
         # Store the transaction details in the transactions dictionary
         self.transactions[transaction_time] = {'type': transaction_type, 'amount': amount}
-        # Update the balance based on the transaction type
-        if transaction_type == 'Deposit':
-            self.balance += amount  # Add the amount to the balance for deposit transactions
-        elif transaction_type == 'Withdraw':
-            self.balance -= amount  # Subtract the amount from the balance for withdrawal transactions
 
         # Update the balance for the current transaction
         self.transactions[transaction_time]['balance'] = self.balance
 
     # Method to view the transaction history
     def view_transaction_history(self):
+        global trans
+        trans = tk.Toplevel(self.root)
+        trans.geometry("370x300")
+        trans.title("Transaction History")
+        trans_list = Listbox(trans,height=10,width=60)
         if not self.transactions:  # Check if there are no transactions
             print("No transactions yet.")
         else:
@@ -332,10 +333,11 @@ class GUI:
             for transaction_time, details in self.transactions.items():
                 if 'balance' in details:  # Check if balance information is available for the transaction
                     # Print transaction details with balance information
-                    print(transaction_time + ": " + details['type'] + " " + str(details['amount']) + " pesos - Current Balance: " + str(details['balance']) + " pesos")
+                    msg = f"{transaction_time}: {details['type']} {details['amount']} pesos - Current Balance: {details['balance']} pesos"
+                    trans_list.insert(tk.END,msg)
                 else:
                     # Print transaction details without balance information
                     print(transaction_time + ": " + details['type'] + " " + str(details['amount']) + " pesos")
-
+        trans_list.pack()
 s = GUI()
 s.run()
