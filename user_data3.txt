@@ -1,3 +1,3 @@
-Username:None
-Password:None
+Username:
+Password:
 Current Balance: 0.0
