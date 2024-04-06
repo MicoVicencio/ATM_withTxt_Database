@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import Label,Button,messagebox,Entry
-
+import datetime
 
 class GUI:
     def __init__(self,
@@ -14,6 +14,8 @@ class GUI:
                  transactions = None
                  ):
         self.transactions = transactions
+        if transactions is None:
+           transactions = {}  # If transactions are not provided, initialize as an empty dictionary
         self.status = status
         self.userName = username
         self.password = password
@@ -304,5 +306,36 @@ class GUI:
                     
         except FileNotFoundError:
             return "The specified file does not exist."
+        
+    def add_transaction(self, transaction_type, amount):
+        self.back_data()
+        now = datetime.datetime.now()  # Get the current date and time
+        transaction_time = now.strftime("%Y-%m-%d %H:%M:%S")  # Format the current date and time
+        # Store the transaction details in the transactions dictionary
+        self.transactions[transaction_time] = {'type': transaction_type, 'amount': amount}
+        # Update the balance based on the transaction type
+        if transaction_type == 'Deposit':
+            self.balance += amount  # Add the amount to the balance for deposit transactions
+        elif transaction_type == 'Withdraw':
+            self.balance -= amount  # Subtract the amount from the balance for withdrawal transactions
+
+        # Update the balance for the current transaction
+        self.transactions[transaction_time]['balance'] = self.balance
+
+    # Method to view the transaction history
+    def view_transaction_history(self):
+        if not self.transactions:  # Check if there are no transactions
+            print("No transactions yet.")
+        else:
+            print("Transaction History:")
+            # Iterate over each transaction in the transactions dictionary
+            for transaction_time, details in self.transactions.items():
+                if 'balance' in details:  # Check if balance information is available for the transaction
+                    # Print transaction details with balance information
+                    print(transaction_time + ": " + details['type'] + " " + str(details['amount']) + " pesos - Current Balance: " + str(details['balance']) + " pesos")
+                else:
+                    # Print transaction details without balance information
+                    print(transaction_time + ": " + details['type'] + " " + str(details['amount']) + " pesos")
+
 s = GUI()
 s.run()
