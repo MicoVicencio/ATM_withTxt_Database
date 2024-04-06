@@ -119,6 +119,7 @@ class GUI:
         create_button.grid(row=3,column=1,padx=10,pady=5)
         
     def atm_ui(self):
+        global atm_functions
         atm_functions = tk.Toplevel(self.root)
         atm_functions.title("ATM Functions")
         atm_functions.config(bg="#222831")
@@ -126,7 +127,7 @@ class GUI:
         title = Label(atm_functions,text="Choose Functionalities",foreground="#EEEEEE",bg="#222831",font=("Arial",10))
         deposit_button = Button(atm_functions,text = "Deposit Money",foreground="#EEEEEE",bg="#222831",command=self.deposit)
         withdraw_button = Button(atm_functions,text="Withdraw Money",foreground="#EEEEEE",bg="#222831",command=self.withdraw)
-        balance_button = Button(atm_functions,text="Check Balance",foreground="#EEEEEE",bg="#222831")
+        balance_button = Button(atm_functions,text="Check Balance",foreground="#EEEEEE",bg="#222831",command=self.check_balance)
         transactions_button = Button(atm_functions,text="View Transactons",foreground="#EEEEEE",bg="#222831")
         
         title.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
@@ -136,16 +137,55 @@ class GUI:
         transactions_button.grid(row=2,column=1,padx=10,pady=10)
         
     def deposit(self):
+        atm_functions.destroy()
+        global depo
         depo = tk.Toplevel(self.root)
         depo.title("Deposit")
         dep_label = Label(depo,text="Money to Deposit:")
-        dep_entry = Entry(depo)
-        dep_button = Button(depo,text="Confirm")
+        self.dep_entry = Entry(depo)
+        dep_button = Button(depo,text="Confirm",command=self.deposit_process)
         dep_label.grid(row = 0,column=0,padx=10,pady=10)
-        dep_entry.grid(row=0,column=1,padx=10,pady=10)
+        self.dep_entry.grid(row=0,column=1,padx=10,pady=10)
         dep_button.grid(row=1,column=1,padx=10,pady=10)
+    def deposit_process(self):
+        d_money = self.dep_entry.get()
+        value = float(d_money)
+        msg = f"Do you want to deposit {value} pesos?"
+        confirmation = messagebox.askyesno("Deposit Confirmation",msg)
+        if confirmation:
+            try:
+              if value <= 0:
+                  messagebox.showinfo("Notice","Please enter valid amount!")
+                  depo.destroy()
+                  self.atm_ui()
+            except ValueError:
+                  messagebox.showwarning("Notice","Please enter numbers")
+                  depo.destroy()
+                  self.atm_ui()
+                  
+            update = f"You successfully deposit {value} pesos!"
+            messagebox.showinfo("Notice",update)      
+            depo.destroy()      
+            self.balance += value
+            self.atm_ui()
+        else:
+            msg = f"Depositing {value} pesos is cancelled!"
+            messagebox.showinfo("Notice",msg)
+            depo.destroy()
+            self.atm_ui()
+            
+    def check_balance(self):
+        atm_functions.destroy()
+        current_money = self.balance
+        msg = f"Your current Balance is {current_money} pesos."
+        messagebox.showinfo("Notice",msg)
+        self.atm_ui()
+        
+            
+        
         
     def withdraw(self):
+        atm_functions.destroy()
         global withdraw
         withdraw = tk.Toplevel(self.root)
         withdraw.title("Withdraw")
@@ -173,9 +213,9 @@ class GUI:
               messagebox.showinfo("Notice",update)    
               withdraw.destroy()
               self.atm_ui()
-              self.balance -= value
               
             else:  
+              self.balance -= value
               update = f"You successfully withdraw {value} pesos!"
               messagebox.showinfo("Notice",update)
               self.save_user_data()
@@ -195,7 +235,7 @@ class GUI:
         
     def update_current_user(self,value):
         self.current_user = value
-        self.atm_ui()
+        self.msg_box('1')
         
            
         
