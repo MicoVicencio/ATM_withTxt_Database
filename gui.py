@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import Label,Button,messagebox,Entry,Listbox
-import datetime
+from datetime import datetime
 
 class GUI:
     def __init__(self,
@@ -142,9 +142,10 @@ class GUI:
         global depo
         depo = tk.Toplevel(self.root)
         depo.title("Deposit")
-        dep_label = Label(depo,text="Money to Deposit:")
+        depo.config(bg="#222831")
+        dep_label = Label(depo,text="Money to Deposit:",bg="#222831",foreground="#EEEEEE")
         self.dep_entry = Entry(depo)
-        dep_button = Button(depo,text="Confirm",command=self.deposit_process)
+        dep_button = Button(depo,text="Confirm",command=self.deposit_process,bg="#222831",foreground="#EEEEEE")
         dep_label.grid(row = 0,column=0,padx=10,pady=10)
         self.dep_entry.grid(row=0,column=1,padx=10,pady=10)
         dep_button.grid(row=1,column=1,padx=10,pady=10)
@@ -193,9 +194,10 @@ class GUI:
         global withdraw
         withdraw = tk.Toplevel(self.root)
         withdraw.title("Withdraw")
-        withdraw_label = Label(withdraw,text="Money to withdraw:")
+        withdraw.config(bg="#222831")
+        withdraw_label = Label(withdraw,text="Money to withdraw:",bg="#222831",foreground="#EEEEEE")
         self.withdraw_entry = Entry(withdraw)
-        withdraw_button = Button(withdraw,text="Confirm",command=self.withdraw_process)
+        withdraw_button = Button(withdraw,text="Confirm",command=self.withdraw_process,bg="#222831",foreground="#EEEEEE")
         withdraw_label.grid(row = 0,column=0,padx=10,pady=10)
         self.withdraw_entry.grid(row=0,column=1,padx=10,pady=10)
         withdraw_button.grid(row=1,column=1,padx=10,pady=10) 
@@ -310,21 +312,25 @@ class GUI:
         
     def add_transaction(self, transaction_type, amount):
         self.back_data()
-        now = datetime.datetime.now()  # Get the current date and time
+        now = datetime.now()  # Get the current date and time
         transaction_time = now.strftime("%Y-%m-%d %H:%M:%S")  # Format the current date and time
         # Store the transaction details in the transactions dictionary
         self.transactions[transaction_time] = {'type': transaction_type, 'amount': amount}
-
         # Update the balance for the current transaction
         self.transactions[transaction_time]['balance'] = self.balance
+        
+        
 
     # Method to view the transaction history
     def view_transaction_history(self):
         global trans
         trans = tk.Toplevel(self.root)
-        trans.geometry("370x300")
+        trans.geometry("480x210")
+        trans.config(bg="#222831")
         trans.title("Transaction History")
-        trans_list = Listbox(trans,height=10,width=60)
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        time = Label(trans,text="Current Time :"+current_time,bg="#222831",foreground="#EEEEEE")
+        trans_list = Listbox(trans,height=10,width=75,bg="#222831",foreground="#EEEEEE")
         if not self.transactions:  # Check if there are no transactions
             print("No transactions yet.")
         else:
@@ -338,6 +344,7 @@ class GUI:
                 else:
                     # Print transaction details without balance information
                     print(transaction_time + ": " + details['type'] + " " + str(details['amount']) + " pesos")
-        trans_list.pack()
+        trans_list.grid(row=0,column=0,padx=10,pady=10)
+        time.grid(row=1,column=0,padx=10,pady=0)
 s = GUI()
 s.run()
