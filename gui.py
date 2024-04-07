@@ -21,10 +21,11 @@ class GUI:
         self.balance = balance  # Private variable with double underscores
         self.current_user = current_user
         self.user_info = user_info
-        self.attempt = 1
+        self.attempt = 3
         self.message = message
         # Paths for storing user data
         self.paths = ["user_data1.txt", "user_data2.txt", "user_data3.txt", "user_data4.txt", "user_data5.txt"]
+        
         
         self.root = tk.Tk()
         self.root.geometry("285x340")
@@ -49,6 +50,7 @@ class GUI:
         self.button_person5.grid(row=6, column=0, padx=10, pady=10)
     
     def login_form(self):
+       
         global login_form
         login_form = tk.Toplevel(self.root)
         login_form.title("Login Interface")
@@ -67,12 +69,27 @@ class GUI:
         self.l_user_entry.grid(row=1,column=1,padx=0,pady=10)
         self.l_pass_entry.grid(row=2,column=1,padx=0,pady=10)
         log_button.grid(row=3,column=1,padx=10,pady=5)
+        if self.attempt == 0:
+            messagebox.showinfo("Notice","3 Login Attempts Unsucessful! Going back to main menu")
+            self.attempt = 3
+            login_form.destroy()
         
     def credentials_verify(self,value):
         if value == '1':
           user_input = self.l_user_entry.get()
           pass_input = self.l_pass_entry.get()
-          if self.userName == user_input and self.password == pass_input:
+          
+          if user_input == "" or pass_input == "":
+              login_form.destroy()
+              messagebox.showinfo("Notice","Cannot Create Account! Fill the Box!")
+              self.login_form()
+          elif user_input != self.userName or pass_input != self.password:
+              if self.attempt > 0:
+                 login_form.destroy()
+                 messagebox.showinfo("Notice","Invalid Username or Password! Try Again!")
+                 self.attempt -= 1
+                 self.login_form()
+          elif self.userName == user_input and self.password == pass_input:
               self.msg_box('2')
               login_form.destroy()
               self.atm_ui()
@@ -84,13 +101,19 @@ class GUI:
         if value == '2':
           user_input = self.c_user_entry.get()
           pass_input = self.c_pass_entry.get()
-          self.userName = user_input
-          self.password = pass_input
-          self.save_user_data()
-          messagebox.showinfo("Account","Account Creation Complete! Proceeding to Login Form")
-          create_form.destroy()
-          self.login_form()
-          
+          if user_input == "" or pass_input == "":
+              create_form.destroy()
+              messagebox.showinfo("Notice","Cannot Create Account! Fill the Box!")
+              self.create_acc()
+          else:    
+            self.userName = user_input
+            self.password = pass_input
+            self.save_user_data()
+            messagebox.showinfo("Account","Account Creation Complete! Proceeding to Login Form")
+            create_form.destroy()
+            self.login_form()
+    
+             
     def save_user_data(self):
         # Save user data based on current_user value
         if self.current_user >= 1 and self.current_user <= 5:

@@ -1,3 +1,3 @@
-Username:mico
-Password:pogi
+Username:
+Password:
 Current Balance: 0.0
